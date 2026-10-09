@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+repo_root="$(git rev-parse --show-toplevel)" || exit 1
+
+git -C "$repo_root" ls-files -z |
+	rsync -avP --from0 --files-from=- "$repo_root/" agents:/home/user/meta-luckfox
