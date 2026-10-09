@@ -1,9 +1,9 @@
 header:
   version: 14
 
-distro: poky
-machine: qemux86-64
-target: core-image-minimal
+distro: luckfox
+machine: luckfox-pico-ultra-w
+target: luckfox-image
 
 defaults:
   repos:
