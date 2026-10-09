@@ -36,15 +36,16 @@ repos:
     layers:
       .: disabled
 
-  meta-luckfox:
-    path: sources/meta-luckfox
-    layers:
-      .: disabled
-
   luckfox-docs:
     url: https://github.com/LuckfoxTECH/Luckfox-Pico-docs
     branch: main
     path: sources/luckfox-docs
     layers:
       .: disabled
+
+  meta-luckfox-bsp:
+    path: sources/meta-luckfox/meta-luckfox-bsp
+
+  meta-luckfox-distro:
+    path: sources/meta-luckfox/meta-luckfox-distro
 
