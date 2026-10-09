@@ -1,0 +1,26 @@
+# PLACEHOLDER: mainline Linux has no RV1106 support (no clock/pinctrl
+# drivers, no device tree). This only selects a generic ARMv7 Rockchip
+# kernel so configuration succeeds. It will not boot the board.
+#
+# TODO: replace with a real defconfig once RV1106 support is available.
+CONFIG_ARCH_MULTI_V7=y
+CONFIG_ARCH_ROCKCHIP=y
+CONFIG_SMP=y
+CONFIG_VFP=y
+CONFIG_NEON=y
+# CONFIG_ARM_APPENDED_DTB is not set
+CONFIG_OF=y
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_8250_DW=y
+CONFIG_SERIAL_OF_PLATFORM=y
+CONFIG_MMC=y
+CONFIG_MMC_DW=y
+CONFIG_MMC_DW_ROCKCHIP=y
+CONFIG_EXT4_FS=y
+CONFIG_VFAT_FS=y
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_TMPFS=y
+CONFIG_CGROUPS=y
+CONFIG_AUTOFS_FS=y

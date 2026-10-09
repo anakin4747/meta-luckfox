@@ -1,0 +1,12 @@
+# PLACEHOLDER: upstream U-Boot has no RV1106 support (no mach-rockchip
+# SoC option, no device tree). This only selects the generic Rockchip
+# ARM target so configuration succeeds. It will not produce a bootable
+# image for the Luckfox Pico Ultra W.
+#
+# TODO: add CONFIG_ROCKCHIP_RV1106, CONFIG_DEFAULT_DEVICE_TREE, SPL/TPL
+#       and rkbin DDR init once RV1106 support is available.
+CONFIG_ARM=y
+CONFIG_ARCH_ROCKCHIP=y
+CONFIG_NR_DRAM_BANKS=1
+CONFIG_SYS_LOAD_ADDR=0x00200000
+CONFIG_DEFAULT_FDT_FILE="rv1106g-luckfox-pico-ultra-w.dtb"
