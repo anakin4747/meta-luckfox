@@ -71,7 +71,7 @@
               export LC_ALL=en_US.UTF-8
               export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive
               # Avoid leaking Nix toolchain settings into bitbake
-              unset CC CXX LD AR NIX_CFLAGS_COMPILE NIX_LDFLAGS PYTHONPATH SOURCE_DATE_EPOCH
+              unset CC CXX LD AR NIX_CFLAGS_COMPILE NIX_LDFLAGS PYTHONPATH SOURCE_DATE_EPOCH TMPDIR
             '';
             runScript = "bash";
           };
