@@ -5,6 +5,9 @@ distro: luckfox
 machine: luckfox-pico-ultra-w
 target: luckfox-image
 
+env:
+  CI_VERSION: "unknown"
+
 defaults:
   repos:
     branch: wrynose
