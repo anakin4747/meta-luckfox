@@ -17,6 +17,10 @@ shell: init
 lint: init
 	$(CQFD) run 'cog check'
 
+.PHONY: menu # make menuconfig for kernel
+menu: init
+	$(CQFD) run 'kas shell -c "bitbake -c menuconfig virtual/kernel"'
+
 .PHONY: build # build in CI for review or release
 build: lint
 	scripts/ci-build
