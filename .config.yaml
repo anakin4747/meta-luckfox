@@ -8,6 +8,10 @@ target: luckfox-image
 env:
   CI_VERSION: "unknown"
 
+local_conf_header:
+  hashserve: |
+    BB_HASHSERVE_DB_DIR = "${SSTATE_DIR}"
+
 defaults:
   repos:
     branch: wrynose
