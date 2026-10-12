@@ -64,6 +64,11 @@ make build
 `DL_DIR` and `SSTATE_DIR` are mounted into the container at the same paths.
 They must be absolute paths with no whitespace.
 
+## Example Usage
+
+For a `Kas` config example for how to use this BSP layer for another build see
+`./examples/meta-luckfox-bsp.yml`
+
 ## Updating Dependencies
 
 ```sh
