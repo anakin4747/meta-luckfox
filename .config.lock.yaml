@@ -10,5 +10,3 @@ overrides:
       commit: 7c25b11156553145fa6b241a2d4f65d94438f804
     yocto-docs:
       commit: a2cc1f5b86f3cdc9ad3257a2545322c5169da3ca
-    luckfox-docs:
-      commit: b28b3929a5b5f78308b2c26d0cad8629f20fcead

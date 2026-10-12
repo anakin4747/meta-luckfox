@@ -4,7 +4,7 @@
 Kas-based yocto build for Luckfox Pico Ultra W
 
 References:
-- https://github.com/LuckfoxTECH/Luckfox-Pico-docs
+- https://github.com/LuckfoxTECH/Luckfox-Pico-docs/blob/main/Hardware/Schematic/Luckfox-Pico-Ultra-W.pdf
 - https://wiki.luckfox.com/Luckfox-Pico-RV1106/Getting-Started
 - sources/yocto-docs/
 
