@@ -11,6 +11,7 @@ require conf/machine/include/arm/armv7a/tune-cortexa7.inc
 KERNEL_IMAGETYPE ?= "zImage"
 
 EXTRA_IMAGEDEPENDS += "virtual/bootloader"
+RKBIN_DDR ?= "rv1106_ddr_924MHz_v1.16.bin"
 
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-image kernel-devicetree"
 MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
