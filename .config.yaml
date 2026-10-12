@@ -11,6 +11,10 @@ env:
 local_conf_header:
   hashserve: |
     BB_HASHSERVE_DB_DIR = "${SSTATE_DIR}"
+  world: |
+    # blueprint-compiler RDEPENDS on python3-pygobject, which is skipped
+    # without GI support, breaking the `bitbake world` ran by yocto-check-layer
+    EXCLUDE_FROM_WORLD:pn-blueprint-compiler = "1"
 
 defaults:
   repos:
