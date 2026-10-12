@@ -16,18 +16,3 @@ layer-check:
 .PHONY: help # prints this message
 help:
 	@scripts/list-targets $(MAKEFILE_LIST)
-
-
-
-
-
-
-
-
-
-
-
-some peoples security policy be like:
-
-	touch SECURITY.md
-
