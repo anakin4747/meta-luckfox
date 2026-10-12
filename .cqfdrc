@@ -3,6 +3,8 @@ org='anakin4747'
 name='meta_luckfox'
 
 [build]
-command="bash"
+command="kas build"
+files="README.md CHANGELOG-release.md"
+archive='%Pn-${CI_VERSION}.tar.gz'
 
 # vi: ft=ini

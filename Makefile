@@ -13,6 +13,10 @@ init:
 lint: init
 	$(CQFD) run 'cog check'
 
+.PHONY: build # build in CI for review or release
+build: lint
+	scripts/ci-build
+
 .PHONY: layer-check # runs yocto-check-layer on meta-luckfox layers
 layer-check: init
 	$(CQFD) run 'kas shell -c "yocto-check-layer \

@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+#
+# Build the image through cqfd in review or release mode.
+#
+# Mode is detected from HEAD:
+#   release - HEAD has an annotated v* tag pointing at it
+#   review  - anything else
+#
+# BUILD_MODE=review|release forces a mode (release still requires the tag).
+#
+# Environment:
+#   DL_DIR      (required) shared downloads directory, reused by all modes
+#   SSTATE_DIR  (required) shared sstate-cache directory, used by review;
+#               release ignores it and uses a fresh, empty sstate-cache
+
+ME=$0
+
+die() {
+	printf "\033[31m${ME}: error: %s\033[0m\n" "$*" >&2
+	exit 1
+}
+
+log() {
+	printf "\033[32m${ME}: %s\033[0m\n" "$*"
+}
+
+: "${DL_DIR:?DL_DIR must be set to the shared downloads directory}"
+: "${SSTATE_DIR:?SSTATE_DIR must be set to the shared sstate-cache directory}"
+: "${BUILD_MODE:=auto}"
+: "${RUNNER_TEMP:=${TMPDIR:-/tmp}}"
+
+missing=()
+for prog in git docker sha256sum mktemp; do
+	if ! command -v "$prog" > /dev/null 2>&1; then
+		missing+=("$prog")
+	fi
+done
+if [ "${#missing[@]}" -ne 0 ]; then
+	die "missing required programs: ${missing[*]}"
+fi
+
+if [ $# -ne 0 ]; then
+	die "usage: $ME (configure with BUILD_MODE, DL_DIR, SSTATE_DIR)"
+fi
+
+repo_root=$(git rev-parse --show-toplevel) || die "not inside a git repository"
+if ! cd "$repo_root"; then
+	die "changing directory to $repo_root failed"
+fi
+
+cqfd="$repo_root/scripts/cqfd"
+
+# cqfd splits CQFD_EXTRA_RUN_ARGS on whitespace, so paths must not contain any
+check_dir() {
+	local name=$1
+	local dir=$2
+
+	if [ -z "$dir" ]; then
+		die "$name is not set"
+	fi
+	case "$dir" in
+	/*) ;;
+	*) die "$name must be an absolute path: $dir" ;;
+	esac
+	case "$dir" in
+	*[[:space:]]*) die "$name must not contain whitespace: $dir" ;;
+	esac
+	if [ ! -d "$dir" ]; then
+		die "$name does not exist: $dir"
+	fi
+	if [ ! -w "$dir" ]; then
+		die "$name is not writable: $dir"
+	fi
+}
+
+# Annotated v* tag pointing at HEAD, or nothing
+release_tag() {
+	local tags
+	local tag
+	local found=""
+
+	tags=$(git tag --points-at HEAD --list 'v*') || die "listing tags at HEAD failed"
+	for tag in $tags; do
+		if [ "$(git cat-file -t "refs/tags/$tag")" != "tag" ]; then
+			continue
+		fi
+		if [ -n "$found" ]; then
+			die "multiple annotated v* tags point at HEAD: $found $tag"
+		fi
+		found=$tag
+	done
+	printf "%s" "$found"
+}
+
+tag=$(release_tag) || exit 1
+
+case "$BUILD_MODE" in
+auto)
+	if [ -n "$tag" ]; then
+		mode=release
+	else
+		mode=review
+	fi
+	;;
+review)
+	mode=review
+	;;
+release)
+	if [ -z "$tag" ]; then
+		die "BUILD_MODE=release but HEAD has no annotated v* tag"
+	fi
+	mode=release
+	;;
+*)
+	die "invalid BUILD_MODE: $BUILD_MODE (expected auto, review, or release)"
+	;;
+esac
+
+check_dir DL_DIR "$DL_DIR"
+
+if [ "$mode" = release ]; then
+	CI_VERSION=$tag
+
+	log "creating empty release sstate-cache"
+	SSTATE_DIR=$(mktemp --directory "$RUNNER_TEMP/sstate-release.XXXXXX") ||
+		die "creating empty release sstate-cache failed"
+	log "creating empty release sstate-cache succeeded: $SSTATE_DIR"
+	# shellcheck disable=SC2064
+	trap "rm -rf '$SSTATE_DIR'" EXIT
+
+	# Never let a previous build's TMPDIR leak into a release
+	log "removing stale build/tmp"
+	if ! rm -rf "$repo_root/build/tmp"; then
+		die "removing stale build/tmp failed"
+	fi
+	log "removing stale build/tmp succeeded"
+else
+	CI_VERSION=$(git describe --tags --always --dirty) ||
+		die "determining version with git describe failed"
+fi
+
+check_dir SSTATE_DIR "$SSTATE_DIR"
+
+export CI_VERSION DL_DIR SSTATE_DIR
+export CQFD_EXTRA_RUN_ARGS="${CQFD_EXTRA_RUN_ARGS:+$CQFD_EXTRA_RUN_ARGS }\
+--volume $DL_DIR:$DL_DIR --env DL_DIR \
+--volume $SSTATE_DIR:$SSTATE_DIR --env SSTATE_DIR \
+--env CI_VERSION"
+
+log "mode: $mode"
+log "version: $CI_VERSION"
+log "DL_DIR: $DL_DIR"
+log "SSTATE_DIR: $SSTATE_DIR"
+
+if [ "$mode" = review ]; then
+	log "building review image"
+	if ! "$cqfd" run; then
+		die "building review image failed"
+	fi
+	log "building review image succeeded"
+	exit 0
+fi
+
+log "generating release changelog for $CI_VERSION"
+if ! "$cqfd" run "cog changelog --at '$CI_VERSION' > CHANGELOG-release.md"; then
+	die "generating release changelog for $CI_VERSION failed"
+fi
+log "generating release changelog for $CI_VERSION succeeded"
+
+archive="meta_luckfox-$CI_VERSION.tar.gz"
+
+log "removing stale $archive"
+if ! rm -f "$archive" "$archive.sha256"; then
+	die "removing stale $archive failed"
+fi
+log "removing stale $archive succeeded"
+
+log "building and packaging release $CI_VERSION"
+if ! "$cqfd" --release run; then
+	die "building and packaging release $CI_VERSION failed"
+fi
+log "building and packaging release $CI_VERSION succeeded"
+
+if [ ! -f "$archive" ]; then
+	die "release archive not found: $archive"
+fi
+
+log "writing checksum for $archive"
+if ! sha256sum "$archive" > "$archive.sha256"; then
+	die "writing checksum for $archive failed"
+fi
+log "writing checksum for $archive succeeded"

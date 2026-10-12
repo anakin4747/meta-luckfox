@@ -40,6 +40,30 @@ Always follow
 `sources/yocto-docs/documentation/dev-manual/customizing-images.rst` section
 `Customizing Images Using Custom .bb Files` when working on the custom image
 
+## Building
+
+All builds run inside the cqfd container (`.cqfd/docker/Dockerfile`) through
+the Makefile. Run `make help` to list the targets.
+
+```sh
+export DL_DIR=/path/to/downloads
+export SSTATE_DIR=/path/to/sstate-cache
+make build
+```
+
+`make build` lints the commit messages with cocogitto first, then runs
+`scripts/ci-build`, which picks the mode from HEAD:
+
+- **review**: HEAD has no annotated `v*` tag. Uses `DL_DIR` and `SSTATE_DIR`
+  as given. `DISTRO_VERSION` is `git describe --tags --always --dirty`
+- **release**: HEAD has an annotated `v*` tag. Uses `DL_DIR`, but builds
+  from an empty temporary sstate-cache. `DISTRO_VERSION` is the tag. Writes
+  the changelog for the tag to `CHANGELOG-release.md` and packages the files
+  listed in `.cqfdrc` into `meta_luckfox-<tag>.tar.gz` plus a `.sha256`
+
+`DL_DIR` and `SSTATE_DIR` are mounted into the container at the same paths.
+They must be absolute paths with no whitespace.
+
 ## Updating Dependencies
 
 ```sh

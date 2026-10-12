@@ -5,3 +5,6 @@
 /sources/luckfox-docs
 /build
 /.kas_shell_history
+/CHANGELOG-release.md
+/meta_luckfox-*.tar.gz
+/meta_luckfox-*.tar.gz.sha256
