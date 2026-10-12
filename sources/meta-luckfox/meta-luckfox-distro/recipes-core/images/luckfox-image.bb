@@ -6,6 +6,6 @@
 SUMMARY = "Luckfox Linux image for the Luckfox Pico boards"
 LICENSE = "MIT"
 
-IMAGE_INSTALL = "packagegroup-core-boot"
+IMAGE_INSTALL = "packagegroup-core-boot vim"
 
 inherit core-image
