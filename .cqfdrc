@@ -4,8 +4,27 @@ name='meta_luckfox'
 
 [build]
 command="kas build"
-files="README.md CHANGELOG-release.md"
+# Deploy symlinks without timestamps, dereferenced and flattened in the archive:
+#   wic, wic.bmap       full eMMC image and its block map for bmaptool
+#   tar.zst, ext4       root filesystem alone
+#   manifest, spdx.json installed packages and SBOM
+#   idblock, uboot, boot.img  individual partitions for the vendor flash tools
+files="\
+    README.md \
+    CHANGELOG-release.md \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.wic \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.wic.bmap \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.tar.zst \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.ext4 \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.manifest \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.spdx.json \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/idblock.img \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/uboot.img \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/boot.img \
+"
 archive='%Pn-${CI_VERSION}.tar.gz'
+tar_transform=yes
+tar_options="--dereference"
 docker_run_args="\
     --volume ${DL_DIR}:${DL_DIR} \
     --env DL_DIR \
