@@ -41,4 +41,15 @@ RUN locale-gen en_US.UTF-8
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-RUN pip3 install --break-system-packages kas
+RUN pip3 install --break-system-packages kas==5.5
+
+# Cocogitto for commit linting, changelogs, and release bumps
+ARG COG_VERSION=7.0.0
+ARG COG_SHA256=e03938ff2c4c86d71c00c0f3284dbbe95c5ca76fe34a51f33e945c23010d59bb
+RUN wget -q -O /tmp/cog.tar.gz \
+    "https://github.com/cocogitto/cocogitto/releases/download/${COG_VERSION}/cocogitto-${COG_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+    && echo "${COG_SHA256}  /tmp/cog.tar.gz" | sha256sum --check --strict \
+    && tar -xzf /tmp/cog.tar.gz -C /usr/local/bin --strip-components=1 \
+       x86_64-unknown-linux-musl/cog \
+    && rm /tmp/cog.tar.gz \
+    && cog --version
