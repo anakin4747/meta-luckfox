@@ -9,6 +9,10 @@ help:
 init:
 	$(CQFD) init
 
+.PHONY: lint # lints all commit messages with cocogitto
+lint: init
+	$(CQFD) run 'cog check'
+
 .PHONY: layer-check # runs yocto-check-layer on meta-luckfox layers
 layer-check: init
 	$(CQFD) run 'kas shell -c "yocto-check-layer \
