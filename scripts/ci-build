@@ -50,7 +50,7 @@ fi
 
 cqfd="$repo_root/scripts/cqfd"
 
-# cqfd splits CQFD_EXTRA_RUN_ARGS on whitespace, so paths must not contain any
+# cqfd splits docker_run_args on whitespace, so paths must not contain any
 check_dir() {
 	local name=$1
 	local dir=$2
@@ -141,11 +141,8 @@ fi
 
 check_dir SSTATE_DIR "$SSTATE_DIR"
 
+# Read by the docker_run_args of .cqfdrc
 export CI_VERSION DL_DIR SSTATE_DIR
-export CQFD_EXTRA_RUN_ARGS="${CQFD_EXTRA_RUN_ARGS:+$CQFD_EXTRA_RUN_ARGS }\
---volume $DL_DIR:$DL_DIR --env DL_DIR \
---volume $SSTATE_DIR:$SSTATE_DIR --env SSTATE_DIR \
---env CI_VERSION"
 
 log "mode: $mode"
 log "version: $CI_VERSION"

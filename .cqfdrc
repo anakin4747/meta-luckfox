@@ -6,5 +6,12 @@ name='meta_luckfox'
 command="kas build"
 files="README.md CHANGELOG-release.md"
 archive='%Pn-${CI_VERSION}.tar.gz'
+docker_run_args="\
+    --volume ${DL_DIR}:${DL_DIR} \
+    --env DL_DIR \
+    --volume ${SSTATE_DIR}:${SSTATE_DIR} \
+    --env SSTATE_DIR \
+    --env CI_VERSION \
+"
 
 # vi: ft=ini
