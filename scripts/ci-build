@@ -143,6 +143,8 @@ check_dir SSTATE_DIR "$SSTATE_DIR"
 
 # Read by the docker_run_args of .cqfdrc
 export CI_VERSION DL_DIR SSTATE_DIR
+export CQFD_NO_SYSTEM_GIT_CONFIG="true"
+export CQFD_NO_SSH_CONFIG="true"
 
 log "mode: $mode"
 log "version: $CI_VERSION"
