@@ -9,6 +9,10 @@ help:
 init:
 	$(CQFD) init
 
+.PHONY: shell # enters a kas shell
+shell: init
+	$(CQFD) run kas shell
+
 .PHONY: lint # lints all commit messages with cocogitto
 lint: init
 	$(CQFD) run 'cog check'
