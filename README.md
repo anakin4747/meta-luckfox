@@ -80,6 +80,37 @@ scripts/mkrelease
 commits it, and creates an annotated `vX.Y.Z` tag. It then pushes the commit
 and tag together to `origin`, and CI builds and publishes the release.
 
+## CI
+
+`.github/workflows/ci.yml` runs on every push. Fork pull requests never
+trigger it. Every job only runs when `anakin4747` is both the actor and the
+triggering actor.
+
+1. `classify` (GitHub-hosted) works out the mode. It rejects tags that are
+   lightweight or not `vX.Y.Z`
+2. `build` (self-hosted, labels `self-hosted, linux, yocto`) runs `make build`
+3. `publish` (GitHub-hosted, the only job with `contents: write`) runs only
+   if the build succeeded. It checks again that the tag hasn't moved and
+   creates the GitHub release with the changelog as the release notes
+
+### Runner requirements
+
+- Labels: `self-hosted`, `linux`, `yocto`. Use a dedicated machine or VM;
+  ephemeral runners are preferred
+- Docker, with the runner user in the `docker` group. **This is root
+  equivalent, and cqfd runs containers with `--privileged`**, so the runner
+  must not hold anything else of value
+- `DL_DIR` and `SSTATE_DIR` set in the runner's service environment, pointing
+  at persistent directories that the runner user can write
+
+### Repository settings
+
+- Actions > General: require approval for all outside collaborators;
+  workflow permissions read-only by default
+- Runner group: restricted to this repository
+- Tag ruleset on `v*`: only the owner may create, update, or delete
+- Branch ruleset on the default branch: no force pushes or deletion
+
 ## Hardware
 
 Summary of `docs/schematic.pdf` (Luckfox Pico Ultra W; the "Ultra" variant is
