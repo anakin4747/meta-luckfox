@@ -1,11 +1,3 @@
-SHELL_PREFIX :=
-ifndef IN_NIX_SHELL
-SHELL_PREFIX := nix develop --experimental-features 'nix-command flakes' --command
-endif
-
-.PHONY: make
-make:
-	$(SHELL_PREFIX) make layer-check
 
 .PHONY: layer-check # runs yocto-check-layer on meta-luckfox layers
 layer-check:

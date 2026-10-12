@@ -43,8 +43,8 @@ Always follow
 ## Updating Dependencies
 
 ```sh
-nix develop
-kas lock --update
+./scripts/cqfd init
+./scripts/cqfd run kas lock --update
 ```
 
 ## Hardware
