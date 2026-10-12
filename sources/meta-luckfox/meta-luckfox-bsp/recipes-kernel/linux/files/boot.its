@@ -1,0 +1,62 @@
+/*
+ * FIT boot.img loaded by the Rockchip vendor U-Boot boot_fit command from
+ * the "boot" partition.
+ *
+ * Based on boot.its from rockchip-linux/kernel develop-6.12. The load and
+ * entry addresses are placeholders that U-Boot replaces at boot.
+ */
+
+/dts-v1/;
+/ {
+	description = "FIT image with Linux kernel, FDT blob and resource";
+
+	images {
+		fdt {
+			data = /incbin/("fdt");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0xffffff00>;
+
+			hash {
+				algo = "sha256";
+			};
+		};
+
+		kernel {
+			data = /incbin/("kernel");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			entry = <0xffffff01>;
+			load = <0xffffff01>;
+
+			hash {
+				algo = "sha256";
+			};
+		};
+
+		resource {
+			data = /incbin/("resource");
+			type = "multi";
+			arch = "arm";
+			compression = "none";
+
+			hash {
+				algo = "sha256";
+			};
+		};
+	};
+
+	configurations {
+		default = "conf";
+
+		conf {
+			rollback-index = <0x00>;
+			fdt = "fdt";
+			kernel = "kernel";
+			multi = "resource";
+		};
+	};
+};
