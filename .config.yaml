@@ -26,13 +26,6 @@ repos:
     layers:
       meta:
 
-  meta-yocto:
-    url: https://git.yoctoproject.org/meta-yocto
-    path: sources/meta-yocto
-    layers:
-      meta-poky:
-      meta-yocto-bsp:
-
   yocto-docs:
     url: https://git.yoctoproject.org/yocto-docs
     path: sources/yocto-docs
