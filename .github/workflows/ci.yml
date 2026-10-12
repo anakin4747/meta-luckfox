@@ -16,6 +16,9 @@ name: CI
 # - release: an annotated v* tag. Reuses DL_DIR, builds from an empty
 #            sstate-cache, and publishes a GitHub release.
 #
+# Every build is followed by a yocto-check-layer stage. A release is only
+# published once both the build and the layer check have passed.
+#
 # TODO: require signed release tags and verify them with git verify-tag in
 #       classify and publish.
 
@@ -124,12 +127,37 @@ jobs:
             meta_luckfox-${{ needs.classify.outputs.tag }}.tar.gz.sha256
             CHANGELOG-release.md
 
+  layer-check:
+    name: Layer check (${{ needs.classify.outputs.mode }})
+    needs: [classify, build]
+    if: >-
+      needs.build.result == 'success' &&
+      github.repository == 'anakin4747/meta-luckfox' &&
+      github.actor == 'anakin4747' &&
+      github.triggering_actor == 'anakin4747'
+    runs-on: [self-hosted, linux, yocto]
+    timeout-minutes: 360
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          fetch-tags: true
+          clean: true
+
+      - name: Layer check
+        run: make layer-check
+
   publish:
     name: Publish release
-    needs: [classify, build]
+    needs: [classify, build, layer-check]
     if: >-
       needs.classify.outputs.mode == 'release' &&
       needs.build.result == 'success' &&
+      needs.layer-check.result == 'success' &&
       github.repository == 'anakin4747/meta-luckfox' &&
       github.actor == 'anakin4747' &&
       github.triggering_actor == 'anakin4747'
