@@ -22,6 +22,6 @@ tag_prefix = "v"
   path = "CHANGELOG.md"
   template = "remote"
   remote = "github.com"
-  repository = "anakins-dtls"
+  repository = "meta-luckfox"
   owner = "anakin4747"
   authors = []
