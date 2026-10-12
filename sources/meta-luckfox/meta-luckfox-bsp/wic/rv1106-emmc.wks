@@ -1,0 +1,6 @@
+part --source rawcopy --sourceparams="file=idblock.img" --part-name idblock --offset 32K --fixed-size 512K
+part --source rawcopy --sourceparams="file=uboot.img" --part-name uboot --offset 544K --fixed-size 256K
+part --source empty --part-name env --offset 800K --fixed-size 32K
+part / --source rootfs --fstype ext4 --label rootfs --part-name rootfs --align 1024
+
+bootloader --ptable gpt
