@@ -70,6 +70,16 @@ They must be absolute paths with no whitespace.
 make lock
 ```
 
+## Releasing
+
+```sh
+scripts/mkrelease
+```
+
+`scripts/mkrelease` runs `cog bump --auto`, which updates `CHANGELOG.md`,
+commits it, and creates an annotated `vX.Y.Z` tag. It then pushes the commit
+and tag together to `origin`, and CI builds and publishes the release.
+
 ## Hardware
 
 Summary of `docs/schematic.pdf` (Luckfox Pico Ultra W; the "Ultra" variant is

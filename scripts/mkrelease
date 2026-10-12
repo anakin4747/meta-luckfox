@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+#
+# Create the next release with cocogitto, inside the cqfd container.
+#
+# cog bump --auto determines the next version from conventional commits since
+# the latest tag, updates CHANGELOG.md, commits it as chore(version), and
+# creates an annotated v* tag. The bump commit and tag are then pushed
+# atomically to origin, which triggers the CI release build and publish.
+#
+# TODO: sign release tags (git tag -s) and verify them in CI with git verify-tag
+
+ME=$0
+
+die() {
+	printf "\033[31m${ME}: error: %s\033[0m\n" "$*" >&2
+	exit 1
+}
+
+log() {
+	printf "\033[32m${ME}: %s\033[0m\n" "$*"
+}
+
+if [ $# -ne 0 ]; then
+	die "usage: $ME"
+fi
+
+repo_root=$(git rev-parse --show-toplevel) || die "not inside a git repository"
+if ! cd "$repo_root"; then
+	die "changing directory to $repo_root failed"
+fi
+
+cqfd="$repo_root/scripts/cqfd"
+remote=origin
+
+branch=$(git symbolic-ref --quiet --short HEAD) || die "HEAD is detached, check out a branch"
+
+if ! git diff --quiet || ! git diff --cached --quiet; then
+	die "working tree has uncommitted changes"
+fi
+
+if [ -n "$(git tag --points-at HEAD --list 'v*')" ]; then
+	die "HEAD is already tagged: $(git tag --points-at HEAD --list 'v*')"
+fi
+
+log "fetching $remote/$branch"
+if ! git fetch --quiet "$remote" "$branch"; then
+	die "fetching $remote/$branch failed"
+fi
+log "fetching $remote/$branch succeeded"
+
+if ! git merge-base --is-ancestor FETCH_HEAD HEAD; then
+	die "$branch is behind or diverged from $remote/$branch"
+fi
+
+log "determining next version"
+# dry-run prints the bare version; the tag gets tag_prefix "v" from .cog.toml
+version=$("$cqfd" run 'cog bump --auto --dry-run --skip-untracked' | tr -d '\r' | tail -n 1) ||
+	die "determining next version failed"
+version="v${version#v}"
+case "$version" in
+v[0-9]*.[0-9]*.[0-9]*) ;;
+*) die "determining next version failed: unexpected output: $version" ;;
+esac
+log "determining next version succeeded: $version"
+
+log "bumping to $version"
+if ! "$cqfd" run "cog bump --auto --skip-untracked --annotated '$version'"; then
+	die "bumping to $version failed"
+fi
+log "bumping to $version succeeded"
+
+if [ "$(git cat-file -t "refs/tags/$version")" != "tag" ]; then
+	die "$version is not an annotated tag"
+fi
+
+log "pushing $branch and $version to $remote"
+if ! git push --atomic "$remote" "HEAD:refs/heads/$branch" "refs/tags/$version"; then
+	die "pushing $branch and $version to $remote failed" \
+		"(retry with: git push --atomic $remote HEAD:refs/heads/$branch refs/tags/$version)"
+fi
+log "pushing $branch and $version to $remote succeeded"
