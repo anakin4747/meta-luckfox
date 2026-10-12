@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Luckfox Pico Ultra W (Rockchip RV1106G3, 8GB eMMC)
+ */
+
+/dts-v1/;
+
+#include "rv1106g3.dtsi"
+
+/ {
+	model = "Luckfox Pico Ultra W";
+	compatible = "luckfox,pico-ultra-w", "rockchip,rv1106g3", "rockchip,rv1106";
+
+	chosen {
+		bootargs = "earlycon=uart8250,mmio32,0xff4c0000 console=ttyFIQ0 root=PARTLABEL=rootfs rootfstype=ext4 rootwait";
+	};
+};
+
+/* Debug UART2_M1 (GPIO1_B2 TX / GPIO1_B3 RX) on header P1 */
+&fiq_debugger {
+	rockchip,irq-mode-enable = <1>;
+	status = "okay";
+};
+
+/* 8GB eMMC, the only boot medium on this board */
+&emmc {
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	non-removable;
+	rockchip,default-sample-phase = <90>;
+	no-sdio;
+	no-sd;
+	status = "okay";
+};

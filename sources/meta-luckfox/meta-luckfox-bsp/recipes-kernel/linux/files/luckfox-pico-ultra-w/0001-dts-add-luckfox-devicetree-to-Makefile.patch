@@ -1,0 +1,21 @@
+From 21502a0b26f9b9eb9eafb28b6f3b158358a89e2c Mon Sep 17 00:00:00 2001
+From: Anakin Childerhose <anakin@childerhose.ca>
+Date: Mon, 12 Oct 2026 11:24:12 -0400
+Subject: [PATCH] dts: add luckfox devicetree to Makefile
+
+---
+ arch/arm/boot/dts/rockchip/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/rockchip/Makefile b/arch/arm/boot/dts/rockchip/Makefile
+index 9bb4300d2dd0..7525c5b40e81 100644
+--- a/arch/arm/boot/dts/rockchip/Makefile
++++ b/arch/arm/boot/dts/rockchip/Makefile
+@@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1106g-evb2-v12-nofastae-spi-nor.dtb \
+ 	rv1106g-evb2-v12-spi-nand-tb.dtb \
+ 	rv1106g-evb2-v12-wakeup.dtb \
++	rv1106g-luckfox-pico-ultra-w.dtb \
+ 	rv1106g-smart-door-lock-rmsl-v10.dtb \
+ 	rv1106g-smart-door-lock-rmsl-v12.dtb \
+ 	rv1106g-uvc-demo-v10.dtb \
