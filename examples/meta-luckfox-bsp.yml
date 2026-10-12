@@ -1,0 +1,38 @@
+# Example kas config for a downstream project that consumes meta-luckfox-bsp.
+#
+# Copy this file into your own project and run:
+#   kas build meta-luckfox-bsp.yml
+
+header:
+  version: 14
+
+machine: luckfox-pico-ultra-w
+distro: poky
+target: core-image-minimal
+
+defaults:
+  repos:
+    branch: wrynose
+
+repos:
+  bitbake:
+    url: https://git.openembedded.org/bitbake
+    branch: "2.18"
+    layers:
+      .: disabled
+
+  openembedded-core:
+    url: https://git.openembedded.org/openembedded-core
+    layers:
+      meta:
+
+  meta-yocto:
+    url: https://git.yoctoproject.org/meta-yocto
+    layers:
+      meta-poky:
+
+  meta-luckfox:
+    url: https://github.com/anakin4747/meta-luckfox.git
+    branch: main
+    layers:
+      sources/meta-luckfox/meta-luckfox-bsp:
