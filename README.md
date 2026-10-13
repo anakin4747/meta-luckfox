@@ -98,6 +98,10 @@ triggering actor.
    if the build succeeded. It checks again that the tag hasn't moved and
    creates the GitHub release with the changelog as the release notes
 
+## Maintainer
+
+Maintainer: Anakin Childerhose `anakin@childerhose.ca`
+
 ## Hardware
 
 Summary of `docs/schematic.pdf` (Luckfox Pico Ultra W; the "Ultra" variant is
