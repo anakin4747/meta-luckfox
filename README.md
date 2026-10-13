@@ -98,24 +98,6 @@ triggering actor.
    if the build succeeded. It checks again that the tag hasn't moved and
    creates the GitHub release with the changelog as the release notes
 
-### Runner requirements
-
-- Labels: `self-hosted`, `linux`, `yocto`. Use a dedicated machine or VM;
-  ephemeral runners are preferred
-- Docker, with the runner user in the `docker` group. **This is root
-  equivalent, and cqfd runs containers with `--privileged`**, so the runner
-  must not hold anything else of value
-- `DL_DIR` and `SSTATE_DIR` set in the runner's service environment, pointing
-  at persistent directories that the runner user can write
-
-### Repository settings
-
-- Actions > General: require approval for all outside collaborators;
-  workflow permissions read-only by default
-- Runner group: restricted to this repository
-- Tag ruleset on `v*`: only the owner may create, update, or delete
-- Branch ruleset on the default branch: no force pushes or deletion
-
 ## Hardware
 
 Summary of `docs/schematic.pdf` (Luckfox Pico Ultra W; the "Ultra" variant is
