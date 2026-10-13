@@ -1,0 +1,32 @@
+header:
+  version: 14
+
+# Base environment for yocto-check-layer. The meta-luckfox layers, machine and
+# distro are intentionally absent: yocto-check-layer adds the layers itself and
+# compares against this baseline.
+
+local_conf_header:
+  hashserve: |
+    BB_HASHSERVE_DB_DIR = "${SSTATE_DIR}"
+  world: |
+    # blueprint-compiler RDEPENDS on python3-pygobject, which is skipped
+    # without GI support, breaking the `bitbake world` ran by yocto-check-layer
+    EXCLUDE_FROM_WORLD:pn-blueprint-compiler = "1"
+
+defaults:
+  repos:
+    branch: wrynose
+
+repos:
+  bitbake:
+    url: https://git.openembedded.org/bitbake
+    branch: "2.18"
+    path: sources/bitbake
+    layers:
+      .: disabled
+
+  openembedded-core:
+    url: https://git.openembedded.org/openembedded-core
+    path: sources/openembedded-core
+    layers:
+      meta:

@@ -27,9 +27,10 @@ build: lint
 
 .PHONY: layer-check # runs yocto-check-layer on meta-luckfox layers
 layer-check: init
-	$(CQFD) run 'kas shell -c "yocto-check-layer \
+	$(CQFD) run 'kas shell .layer-check.yaml:.config.lock.yaml -c "yocto-check-layer \
 		../sources/meta-luckfox/meta-luckfox-bsp \
-		../sources/meta-luckfox/meta-luckfox-distro"'
+		../sources/meta-luckfox/meta-luckfox-distro \
+		--machines luckfox-pico-ultra-w"'
 
 .PHONY: lock # updates the kas lock file
 lock: init
