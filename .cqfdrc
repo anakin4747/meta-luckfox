@@ -9,6 +9,7 @@ command="kas build -- -k"
 #   tar.zst, ext4       root filesystem alone
 #   manifest, spdx.json installed packages and SBOM
 #   idblock, uboot, boot.img  individual partitions for the vendor flash tools
+#   rv1106_download.bin USB loader for flashing from MaskROM (rkdeveloptool db)
 files="\
     README.md \
     build/tmp/deploy/images/luckfox-pico-ultra-w/luckfox-image-luckfox-pico-ultra-w.rootfs.wic \
@@ -20,6 +21,7 @@ files="\
     build/tmp/deploy/images/luckfox-pico-ultra-w/idblock.img \
     build/tmp/deploy/images/luckfox-pico-ultra-w/uboot.img \
     build/tmp/deploy/images/luckfox-pico-ultra-w/boot.img \
+    build/tmp/deploy/images/luckfox-pico-ultra-w/rv1106_download.bin \
 "
 archive='%Pn-${CI_VERSION}.tar.gz'
 tar_transform=yes
