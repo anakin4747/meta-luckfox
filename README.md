@@ -102,6 +102,10 @@ triggering actor.
 
 Maintainer: Anakin Childerhose `anakin@childerhose.ca`
 
+## Contributing
+
+Patches can be submitted to this repo via pull requests.
+
 ## Hardware
 
 Summary of `docs/schematic.pdf` (Luckfox Pico Ultra W; the "Ultra" variant is
