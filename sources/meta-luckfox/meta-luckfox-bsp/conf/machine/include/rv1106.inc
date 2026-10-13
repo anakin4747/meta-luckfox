@@ -13,5 +13,10 @@ KERNEL_IMAGETYPE ?= "zImage"
 EXTRA_IMAGEDEPENDS += "virtual/bootloader"
 RKBIN_DDR ?= "rv1106_ddr_924MHz_v1.16.bin"
 
+# USB download loader for flashing from MaskROM (rkdeveloptool db), built by
+# rkbin from this boot_merger ini and deployed as rv1106_download.bin
+EXTRA_IMAGEDEPENDS += "rkbin"
+RKBIN_LOADER_INI ?= "RKBOOT/RV1106MINIALL.ini"
+
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS += "kernel-image kernel-devicetree"
 MACHINE_EXTRA_RRECOMMENDS += "kernel-modules"
