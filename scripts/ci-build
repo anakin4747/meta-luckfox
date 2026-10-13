@@ -8,6 +8,13 @@
 #
 # BUILD_MODE=review|release forces a mode (release still requires the tag).
 #
+# Both modes package the image with cqfd --release into
+# meta_luckfox-<version>.tar.gz plus a .sha256. Review versions come from
+# git describe; release versions are the tag. Release also generates
+# CHANGELOG-release.md for the GitHub release notes.
+#
+# When GITHUB_OUTPUT is set, version= and archive= are written to it.
+#
 # Environment:
 #   DL_DIR      (required) shared downloads directory, reused by all modes
 #   SSTATE_DIR  (required) shared sstate-cache directory, used by review;
@@ -151,34 +158,27 @@ log "version: $CI_VERSION"
 log "DL_DIR: $DL_DIR"
 log "SSTATE_DIR: $SSTATE_DIR"
 
-if [ "$mode" = review ]; then
-	log "building review image"
-	if ! "$cqfd"; then
-		die "building review image failed"
+if [ "$mode" = release ]; then
+	log "generating release changelog for $CI_VERSION"
+	if ! "$cqfd" run "cog changelog --at '$CI_VERSION' > CHANGELOG-release.md"; then
+		die "generating release changelog for $CI_VERSION failed"
 	fi
-	log "building review image succeeded"
-	exit 0
+	log "generating release changelog for $CI_VERSION succeeded"
 fi
-
-log "generating release changelog for $CI_VERSION"
-if ! "$cqfd" run "cog changelog --at '$CI_VERSION' > CHANGELOG-release.md"; then
-	die "generating release changelog for $CI_VERSION failed"
-fi
-log "generating release changelog for $CI_VERSION succeeded"
 
 archive="meta_luckfox-$CI_VERSION.tar.gz"
 
-log "removing stale $archive"
-if ! rm -f "$archive" "$archive.sha256"; then
-	die "removing stale $archive failed"
+log "removing stale archives"
+if ! rm -f meta_luckfox-*.tar.gz meta_luckfox-*.tar.gz.sha256; then
+	die "removing stale archives failed"
 fi
-log "removing stale $archive succeeded"
+log "removing stale archives succeeded"
 
-log "building and packaging release $CI_VERSION"
+log "building and packaging $mode $CI_VERSION"
 if ! "$cqfd" --release; then
-	die "building and packaging release $CI_VERSION failed"
+	die "building and packaging $mode $CI_VERSION failed"
 fi
-log "building and packaging release $CI_VERSION succeeded"
+log "building and packaging $mode $CI_VERSION succeeded"
 
 if [ ! -f "$archive" ]; then
 	die "release archive not found: $archive"
@@ -189,3 +189,11 @@ if ! sha256sum "$archive" > "$archive.sha256"; then
 	die "writing checksum for $archive failed"
 fi
 log "writing checksum for $archive succeeded"
+
+if [ -n "${GITHUB_OUTPUT:-}" ]; then
+	log "writing step outputs"
+	if ! printf "version=%s\narchive=%s\n" "$CI_VERSION" "$archive" >> "$GITHUB_OUTPUT"; then
+		die "writing step outputs failed"
+	fi
+	log "writing step outputs succeeded"
+fi

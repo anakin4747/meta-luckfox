@@ -16,6 +16,10 @@ name: CI
 # - release: an annotated v* tag. Reuses DL_DIR, builds from an empty
 #            sstate-cache, and publishes a GitHub release.
 #
+# Every build is packaged with cqfd --release and uploaded as a workflow
+# artefact for 7 days: meta_luckfox-<git describe> for review, release for
+# release. Download with: gh run download <run-id>
+#
 # Every build is followed by a yocto-check-layer stage. A release is only
 # published once both the build and the layer check have passed.
 #
@@ -111,9 +115,21 @@ jobs:
           clean: true
 
       - name: Build
+        id: build
         env:
           BUILD_MODE: ${{ needs.classify.outputs.mode }}
         run: make build
+
+      - name: Upload review artefacts
+        if: needs.classify.outputs.mode == 'review'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: meta_luckfox-${{ steps.build.outputs.version }}
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            ${{ steps.build.outputs.archive }}
+            ${{ steps.build.outputs.archive }}.sha256
 
       - name: Upload release artefacts
         if: needs.classify.outputs.mode == 'release'
@@ -123,8 +139,8 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           path: |
-            meta_luckfox-${{ needs.classify.outputs.tag }}.tar.gz
-            meta_luckfox-${{ needs.classify.outputs.tag }}.tar.gz.sha256
+            ${{ steps.build.outputs.archive }}
+            ${{ steps.build.outputs.archive }}.sha256
             CHANGELOG-release.md
 
   layer-check:
