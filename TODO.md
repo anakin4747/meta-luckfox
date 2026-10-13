@@ -34,7 +34,3 @@ oelint-adv
 Add warning about that the distro will not be secure sinces its intended for
 development. Consumers of this repo are expected to create their own secure
 distro.
-
----
-
-Remove CHANGELOG-release.md and generate a normal CHANGELOG.md file
