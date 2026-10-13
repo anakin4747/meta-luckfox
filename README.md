@@ -64,6 +64,30 @@ make build
 `DL_DIR` and `SSTATE_DIR` are mounted into the container at the same paths.
 They must be absolute paths with no whitespace.
 
+## Flashing
+
+The board has no SD card slot; images are written to the eMMC over USB-C
+from MaskROM mode with `rkdeveloptool`. The build deploys the USB download
+loader as `rv1106_download.bin` next to the image (built by `rkbin` from
+`RKBIN_LOADER_INI` with rkbin's `boot_merger`, which needs an x86_64 build
+host).
+
+1. Remove all power (unplug USB-C, and PoE if connected), hold the BOOT
+   button, plug USB-C in (and PoE, if used), release BOOT
+2. Flash:
+
+```sh
+# should list a Maskrom device
+rkdeveloptool ld
+# required in MaskROM, else "Write LBA failed!"
+rkdeveloptool db rv1106_download.bin
+rkdeveloptool wl 0 luckfox-image-luckfox-pico-ultra-w.rootfs.wic
+rkdeveloptool rd
+```
+
+The boot log is on the debug UART (UART2_M1, 115200 8N1): P1 pin 17 is TX,
+pin 18 is RX, pin 16/20 is GND. Use a 3.3V adapter.
+
 ## Example Usage
 
 For a `Kas` config example for how to use this BSP layer for another build see
