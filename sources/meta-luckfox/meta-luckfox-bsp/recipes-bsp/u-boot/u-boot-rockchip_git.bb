@@ -17,6 +17,8 @@ PV = "2017.09+git"
 SRCREV = "1c535d65b8509f388d09e49fb6961f49fda35a1d"
 SRC_URI = "git://github.com/rockchip-linux/u-boot.git;protocol=https;branch=next-dev"
 
+EXTRA_OEMAKE += 'KCFLAGS="-Wno-error=enum-int-mismatch -Wno-error=maybe-uninitialized"'
+
 B = "${WORKDIR}/build"
 do_configure[cleandirs] = "${B}"
 
