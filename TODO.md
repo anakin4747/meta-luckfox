@@ -3,22 +3,6 @@ Yocto TDD from the start
 
 ---
 
-WARNING: Your host glibc version (2.44) is newer than that in uninative (2.43). Disabli
-ng uninative so that sstate is not corrupted.
-
-
----
-
-inject distro version from repo git version
-
----
-
-The goal is to upstream patches right?
-
-Are you allowed to just upstream work in rockchip-linux to linux?
-
----
-
 Makefile targets for things like pulling all SRC_URI to prepare to self host
 the premirrors.
 
@@ -40,10 +24,6 @@ Also just general bumps like using dependabot or something
 
 Setting the board in a test harness that you can access or can be accessed by
 CI to do hardware in the loop testing
-
----
-
-wire up COPYING files as symlinks to top level licence
 
 ---
 
